@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>COVID-19 Interventions Simulation - کورونا وائرس کی سمیولیشن
+  </title>
+
+  <meta name="description" content="COVID-19 Spread Simulator with different intervention strategies. Open source.">
+  <meta name="twitter:domain" content="codelabs.technology" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:title" content="Coronavirus Spread Simulator 🦠" />
+  <meta property="og:description" content="Coronavirus Spread Simulator with different strategies. Open source." />
+  <meta property="og:site_name" content="midu.dev" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link as="script" rel="preload" href="./p5.min.js" />
+  <link as="script" rel="modulepreload" href="./app.js" />
+  <link as="script" rel="modulepreload" href="./options.js" />
+  <link as="script" rel="modulepreload" href="./dom.js" />
+  <link as="script" rel="modulepreload" href="./Ball.js" />
+  <link as="script" rel="modulepreload" href="./results.js" />
+  <link as="script" rel="modulepreload" href="./collisions.js" />
+  
+  <script defer src="./p5.min.js"></script>
+  <script type="module" src="./app.js"></script>
+  <style>
+    html {
+      box-sizing: border-box;
+    }
+    
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
+    #share {
+      position: fixed;
+      bottom: 16px;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px 0 0px 5px;
+      background: rgba(0, 153, 255, 0.25);
+      z-index: 1;
+      text-decoration: none;
+      font-size: 12px;
+      padding: 4px 16px;
+      color: #000;
+    }
+
+    p {
+      margin: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    #share:hover {
+      background: rgba(0, 153, 255, 0.5);
+    }
+
+    body {
+     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0 auto;
+      width: 360px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin-top: 8px;
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    canvas {
+    }
+    #defaultCanvas0 {
+      border: solid 1px #ddd;
+    }
+
+    #graph {
+      margin-bottom: 16px;
+      transform: scaleY(-1);
+    }
+
+    #count {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #count div {
+      margin-bottom: 8px;
+      margin-right: 16px;
+      flex: 1 1 0px;
+    }
+
+    #count span {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    footer {
+      padding-bottom: 16px;
+      color: #777;
+    }
+
+    footer a {
+      color: #09f;
+    }
+
+    form {
+      margin-bottom: 0;
+   }
+
+   label {
+      font-size: 16px;
+      line-height: 32px;
+      display: flex;
+      align-items: center;
+        margin-right: 2ch;
+    }
+    input {
+      margin-left: 0.5ch;
+      font-size: 15px;
+      display: inline-block;
+      height: 30px;
+    }
+    input[type="text"] {
+      width: 5ch;
+      padding-left: 0.25ch;
+      padding-right: 0.25ch;
+    }
+    input[type="checkbox"] {
+      margin-right: 0.75ch;
+    }
+    .form-settings {
+      background: #efefef;
+      padding-left: 1ch;
+      padding-right: 1ch;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
+          margin-bottom: 0.5rem;
+    }
+    .form-section-label {
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      line-height: 28px;
+      margin-top: 4px;
+      letter-spacing: 0.1em;
+    }
+    .form-section {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #canvas {
+      margin: auto;
+      padding-bottom: 16px;
+      position: relative;
+    }
+
+    #replay {
+      align-items: center;
+      background: rgba(255, 255, 255, .85);
+      cursor: pointer;
+      display: flex;
+      height: 100%;
+      font-weight: 500;
+      font-size: 21px;
+      justify-content: center;
+      position: absolute;
+      width: 100%;
+    }
+
+    #death-count {
+      display: none;
+    }
+
+    #death-count.show {
+      display: block;
+    }
+
+   #runnow {
+      width: 100%;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        font-size: 16px;
+          display: block;
+            height: 32px;
+    }
+
+    @media (min-width: 800px) {
+      body {
+       width: 800px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+    <main>
+    <header>      
+      <div style="text-align: center;">
+      <img src="https://pbs.twimg.com/profile_images/794946268669812736/DLr4wS6R_400x400.jpg" width="100"/>
+    </div>
+      <h1>COVID-19 Interventions Simulation- کورونا وائرس کی سمیولیش      </h1>
+      <h2 > ICT Project - Zakariya Masood</h2>
+      This is a live simulation of COVID-19 to spread awareness about social distancing, and wearing a mask to limit the spread of coronavirus. 
+      You can change different parameters to control the spread of virus. We have removed mortality rate from the settings due to its great variation based on demographics, but for Pakistan it is ~2%
+      
+      <div><br/></div>
+      <div style="font-size: 18px; margin-bottom: 4px; text-align: center;"><strong>Settings - سیٹنگز</strong></div>
+
+      <div class="form-settings"  style="text-align: center;">
+      <form>
+         <div  style="text-align: center;">
+          <label aria-label="Baseline R0" title="R0 in the absence of interventions">
+            Baseline spread rate (R0): <input id="baseline-r0" type="text" size=5> پھیلاؤ کی شرح
+          </label>
+        </div>
+        <label aria-label="Gloves %" title="Percent of people who wear gloves">
+          <input id="gloves-pct" type="text" size=3>Gloves % دستانے پہننے کی شرح
+        </label>
+
+        <div class="form-section-label" style="text-align: center;">
+          <div>Personal Interventions</div>
+        </div>
+        <div class="form-section"  style="text-align: center;">
+        <label aria-label="Mask %" title="Percent of people who wear masks">
+          Masks: <input id="mask-pct" type="text" size=3>%
+          ماسک پہننے کی شرح
+        </label>
+
+        <label aria-label="Handwash %" title="Percent of people who wash hands 10x or more per day">
+          Handwashing: <input id="handwash-pct" type="text" size=3>%
+          ہاتھ دھونے کی شرح
+        </label>
+
+        <label aria-label="N95 %" title="Percent of people who wear N95 masks">
+          N95: <input id="n95-pct" type="text" size=3>%
+          این ۹۵ ماسک کی شرح
+        </label> 
+        </div>
+      </form>
+
+
+      <form>
+
+        <div class="form-section-label"  style="text-align: center;">
+          <div>Social Interventions</div>
+        </div>
+ 
+        <div class="form-section"  style="text-align: center;">
+          <label aria-label="Social Distance %" title="Percent of interactions prevented by social distancing">
+            Social Distance: <input id="social-distance-pct" type="text" size=3>%
+            سماجی فاصلہ
+          </label> 
+
+        <label aria-label="Emergency" title="Impose an emergency lockdown on 85% of the population">
+          <input id="emergency-lockdown" type="checkbox"> Lockdown
+          لاک ڈاون
+        </label>
+        </div>
+
+        <div class="form-section-label"  style="text-align: center;">
+          <div>Testing and quarantine - ٹیسٹنگ اور قرنطینہ</div>          
+        </div>
+
+        <div class="form-section"  style="text-align: center;">
+        <label aria-label="Testing Frequency (days)" title="Frequency of random testing">
+          Test Frequency: <input id="test-frequency" type="text" size=5 style="margin-right: 0.5ch">days
+          ٹیسٹ کی تعداد
+        </label>
+
+
+        <label aria-label="Testing Coverage" title="Percent of people who are covered by each random test">
+          Testing Coverage: <input id="test-pct" type="text" size=3>%
+          ٹیسٹنگ کی کوریج
+        </label>
+        </div>
+
+      </form>
+
+      <button id="runnow" type="button" class="button">Start the simulation - سمیولیشن شروع کریں</button>
+      </div>
+
+      <div style="font-size: 18px; margin-bottom: 2px;"><strong>Simulation</strong></div>
+
+      <div id="count">
+        <div>Healthy - صحت مند<br /><span id="well">0</span></div>
+        <div>Recovered - صحتیاب<br /><span id="recovered">0</span></div>
+        <div>Sick - بیمار<br /><span id="infected">0</span></div>
+        <div>Quarantined- قرنطینہ<br /><span id="quarantined">0</span></div>
+        <div>Max Conccurrent Sick - بیک وقت بیماروں کی تعداد<br /><span id="max-concurrent-infected">0</span></div>
+      </div>
+
+      <svg id="graph" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="50" width="100%" aria-labelledby="Graph of virus spread" role="img">
+        <title>Graph of virus spread</title>
+      </svg>
+    </header>
+    <section>
+      <div id="canvas">
+        <div id="replay" style='display: none'>🔁 Run a new simulation - سمیولیشن شروع کریں
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div style="font-size: 18px; margin-bottom: 4px;"><strong>Information</strong></div>
+
+  <p>
+    استعمال کرنے کا طریقہ: یہ واشنگٹن پوسٹ COVID-19 سمیلیٹر کی طرح ہے لیکن اسے ہمارے اسکول میں آگاہی کے  وبائی پھیلاؤ سے آگاہی کے لئے بنایا گیا ہے۔ آپ اس سے مختلف سیمیولیشن کر کر یہ ثابت کر سکتے ہیں کہ وائرس کو آبادی کے ایک بڑے حصے کو متاثر کرنے کی اجازت دینے سے ممکنہ طور پر زندگی کا زبردست نقصان اور صحت کے نظام کا زیادہ بوجھ پڑ سکتا ہے
+    <b><a href='https://www.washingtonpost.com/graphics/2020/world/corona-simulator/'>Washington Post COVID-19 simulator</a> .
+  </p>
+  
+  <footer>
+    Based on <a target="_blank" rel="noopener nofollow" href='https://corona-virus-spread-simulator.midudev.now.sh/'>This Project</a> | <a href='https://github.com/apatil/COVID-19-spread-simulator' target="_blank" rel="noopener nofollow">Source Code</a> | Modified by Zakariya Masood
+  </footer>
+</body>
+</html>

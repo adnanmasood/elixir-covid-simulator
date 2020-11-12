@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/fdeb5113-4672-40f0-9b16-6a7eefda0732/resourceGroups/covid19-nodejs/providers/Microsoft.Web/sites/elixir-covid19-simulator",
+    "appService.deploySubpath": "."
+}
